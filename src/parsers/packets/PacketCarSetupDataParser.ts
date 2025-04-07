@@ -18,7 +18,7 @@ export class PacketCarSetupDataParser extends F1Parser {
         type: new CarSetupDataParser(packetFormat),
       });
 
-    if (packetFormat === 2024) {
+    if (packetFormat >= 2024) {
       this.floatle('m_nextFrontWingValue');
     }
 

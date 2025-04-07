@@ -231,6 +231,8 @@ export interface EventDataDetails {
   eventType: number; // named bad, it's deployment status
   vehicle1Idx: number; // named bad, it's vehicle index of the first vehicle involved in the collision
   vehicle2Idx: number; // named bad, it's vehicle index of the second vehicle involved in the collision
+  stopTime: number; // Time spent serving stop go in seconds
+  reason: number;
 }
 
 export interface PacketEventData {
@@ -252,6 +254,8 @@ export interface ParticipantData {
   m_showOnlineNames: number;
   m_techLevel: number; // F1 24 only
   m_platform: number;
+  m_numColours: number;
+  m_liveryColours: LiveryColour[];
 }
 
 export interface PacketParticipantsData {
@@ -358,6 +362,7 @@ export interface FinalClassificationData {
   m_points: number;
   m_numPitStops: number;
   m_resultStatus: number;
+  m_resultReason: number;
   m_bestLapTimeInMs: number;
   m_totalRaceTime: number;
   m_penaltiesTime: number;
@@ -397,6 +402,7 @@ export interface CarDamageData {
   m_tyresWear: number[];
   m_tyresDamage: number[];
   m_brakesDamage: number[];
+  m_tyreBlisters: number[];
   m_frontLeftWingDamage: number;
   m_frontRightWingDamage: number;
   m_rearWingDamage: number;
@@ -504,6 +510,9 @@ export interface PacketMotionExData {
   m_frontRollAngle: number;
   m_rearRollAngle: number;
   m_chassisYaw: number;
+  m_chassisPitch: number;
+  m_wheelCamber: number[];
+  m_wheelCamberGain: number[];
 }
 
 export interface TimeTrialDataSet {
@@ -526,4 +535,19 @@ export interface PacketTimeTrialData {
   m_playerSessionBestDataSet: TimeTrialDataSet;
   m_personalBestDataSet: TimeTrialDataSet;
   m_rivalDataSet: TimeTrialDataSet;
+}
+
+export interface LiveryColour {
+  red: number;
+  blue: number;
+  green: number;
+}
+
+// Frequency: 1 per second
+// Size: 1131 bytes
+export interface PacketLapPositionsData {
+  m_header: PacketHeader;
+  m_numLaps: number; // Number of laps in the data
+  m_lapStart: number; // Index of the lap where the data starts, 0 indexed
+  m_positionForVehicleIdx: number[][]; // Array holding the position of the car in a given lap, 0 if no record : m_positionForVehicleIdx[50][cs_maxNumCarsInUDPData];
 }

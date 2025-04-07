@@ -14,6 +14,7 @@ import {
   PacketTyreSetsDataParser,
   PacketMotionExDataParser,
   PacketTimeTrialDataParser,
+  PacketLapPositionsDataParser,
 } from './parsers/packets';
 
 export interface Options {
@@ -53,5 +54,6 @@ export interface ParsedMessage {
     | PacketCarDamageDataParser
     | PacketFinalClassificationDataParser
     | PacketLobbyInfoDataParser
+    | PacketLapPositionsDataParser
     | null;
 }
