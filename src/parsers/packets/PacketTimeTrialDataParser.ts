@@ -1,16 +1,14 @@
-import {F1Parser} from '../F1Parser';
-import {PacketHeaderParser} from './PacketHeaderParser';
-import {TimeTrialDataSetParser} from './TimeTrialDataSetParser';
-import {PacketTimeTrialData} from './types';
+import { F1Parser } from '../F1Parser';
+import { PacketHeaderParser } from './PacketHeaderParser';
+import { TimeTrialDataSetParser } from './TimeTrialDataSetParser';
+import { PacketTimeTrialData } from './types';
 
-export class PacketTimeTrialDataParser extends F1Parser {
-  data: PacketTimeTrialData;
-
-  constructor(buffer: Buffer, packetFormat: number) {
+export class PacketTimeTrialDataParser extends F1Parser<PacketTimeTrialData> {
+  constructor() {
     super();
 
     this.endianess('little').nest('m_header', {
-      type: new PacketHeaderParser(packetFormat),
+      type: new PacketHeaderParser(),
     });
 
     this.nest('m_playerSessionBestDataSet', {
@@ -24,7 +22,5 @@ export class PacketTimeTrialDataParser extends F1Parser {
     this.nest('m_rivalDataSet', {
       type: new TimeTrialDataSetParser(),
     });
-
-    this.data = this.fromBuffer(buffer);
   }
 }

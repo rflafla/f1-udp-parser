@@ -4,15 +4,13 @@ import {TyreStintsHistoryDataParser} from './TyreStintsHistoryDataParser';
 import {PacketHeaderParser} from './PacketHeaderParser';
 import {PacketSessionHistoryData} from './types';
 
-export class PacketSessionHistoryDataParser extends F1Parser {
-  data: PacketSessionHistoryData;
-
-  constructor(buffer: Buffer, packetFormat: number) {
+export class PacketSessionHistoryDataParser extends F1Parser<PacketSessionHistoryData> {
+  constructor(packetFormat: number) {
     super();
 
     this.endianess('little')
       .nest('m_header', {
-        type: new PacketHeaderParser(packetFormat),
+        type: new PacketHeaderParser(),
       })
       .uint8('m_carIdx')
       .uint8('m_numLaps')
@@ -29,7 +27,5 @@ export class PacketSessionHistoryDataParser extends F1Parser {
         length: 8,
         type: new TyreStintsHistoryDataParser(),
       });
-
-    this.data = this.fromBuffer(buffer);
   }
 }

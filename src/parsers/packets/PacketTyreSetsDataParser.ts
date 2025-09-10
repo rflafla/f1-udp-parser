@@ -3,15 +3,13 @@ import {TyreSetDataParser} from './TyreSetDataParser';
 import {PacketHeaderParser} from './PacketHeaderParser';
 import {PacketTyreSetsData} from './types';
 
-export class PacketTyreSetsDataParser extends F1Parser {
-  data: PacketTyreSetsData;
-
-  constructor(buffer: Buffer, packetFormat: number) {
+export class PacketTyreSetsDataParser extends F1Parser<PacketTyreSetsData> {
+  constructor() {
     super();
 
     this.endianess('little')
       .nest('m_header', {
-        type: new PacketHeaderParser(packetFormat),
+        type: new PacketHeaderParser(),
       })
       .uint8('m_carIdx')
       .array('m_tyreSetData', {
@@ -19,7 +17,5 @@ export class PacketTyreSetsDataParser extends F1Parser {
         type: new TyreSetDataParser(),
       })
       .uint8('m_fittedIdx');
-
-    this.data = this.fromBuffer(buffer);
   }
 }

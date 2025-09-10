@@ -1,6 +1,6 @@
 {
-  "name": "@deltazeroproduction/f1-udp-parser",
-  "version": "1.1.2",
+  "name": "@rflafla/f1-udp-parser",
+  "version": "2.0.0",
   "main": "build/src/index.js",
   "types": "build/src/index.d.ts",
   "files": [
@@ -12,11 +12,10 @@
     "url": "https://github.com/deltazeroproduction/f1-udp-parser.git"
   },
   "dependencies": {
-    "binary-parser": "^1.5.0",
+    "binary-parser": "^2.2.1",
     "struct": "^0.0.12"
   },
   "devDependencies": {
-    "@types/binary-parser": "^1.5.0",
     "@types/jest": "^29.2.5",
     "eslint": "^7.32.0",
     "eslint-plugin-import": "^2.26.0",
@@ -66,6 +65,7 @@
     "f12024",
     "f124",
     "f1 2024",
+    "f1 2025",
     "formula 1",
     "f1",
     "codemasters",

@@ -1,6 +1,7 @@
 import { F1Parser } from '../F1Parser';
+import { LiveryColour, ParticipantData } from './types';
 
-export class LiveryColourParser extends F1Parser {
+export class LiveryColourParser extends F1Parser<LiveryColour> {
   constructor() {
     super();
 
@@ -10,7 +11,7 @@ export class LiveryColourParser extends F1Parser {
   }
 }
 
-export class ParticipantDataParser extends F1Parser {
+export class ParticipantDataParser extends F1Parser<ParticipantData> {
   constructor(packetFormat: number) {
     super();
 

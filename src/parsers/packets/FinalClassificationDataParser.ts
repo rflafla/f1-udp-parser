@@ -1,7 +1,8 @@
 import { Parser } from 'binary-parser';
 import { F1Parser } from '../F1Parser';
+import { FinalClassificationData } from './types';
 
-export class FinalClassificationDataParser extends F1Parser {
+export class FinalClassificationDataParser extends F1Parser<FinalClassificationData> {
   constructor(packetFormat: number) {
     super();
 

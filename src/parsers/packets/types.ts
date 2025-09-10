@@ -1,3 +1,7 @@
+export interface PacketHeaderFormat {
+  m_packetFormat: number;
+}
+
 export interface PacketHeader {
   m_packetFormat: number;
   m_gameYear: number;

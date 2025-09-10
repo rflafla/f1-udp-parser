@@ -3,15 +3,13 @@ import { F1Parser } from '../F1Parser';
 import { PacketHeaderParser } from './PacketHeaderParser';
 import { PacketLapPositionsData } from './types';
 
-export class PacketLapPositionsDataParser extends F1Parser {
-    data: PacketLapPositionsData;
-
-    constructor(buffer: Buffer, packetFormat: number) {
+export class PacketLapPositionsDataParser extends F1Parser<PacketLapPositionsData> {
+    constructor() {
         super();
 
         this.endianess('little')
             .nest('m_header', {
-                type: new PacketHeaderParser(packetFormat),
+                type: new PacketHeaderParser(),
             })
             .uint8('m_numLaps')
             .uint8('m_lapStart')
@@ -23,7 +21,5 @@ export class PacketLapPositionsDataParser extends F1Parser {
                         type: new Parser().uint8(''),
                     }),
             });
-
-        this.data = this.fromBuffer(buffer);
     }
 }

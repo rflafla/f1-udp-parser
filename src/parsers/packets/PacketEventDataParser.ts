@@ -5,8 +5,88 @@ import { F1Parser } from '../F1Parser';
 
 import { PacketHeaderParser } from './PacketHeaderParser';
 import { PacketEventData } from './types';
+import { EVENT_CODES_INDEX } from '../../constants/eventCodes';
 
-export class FastestLapParser extends F1Parser {
+export interface FastestLap {
+  vehicleIdx: number;
+  lapTime: number;
+}
+
+export interface Retirement {
+  vehicleIdx: number;
+  reason?: number;
+}
+
+export interface DRSDisabled {
+  reason: number;
+}
+
+export interface TeamMateInPits {
+  vehicleIdx: number;
+}
+
+export interface RaceWinner {
+  vehicleIdx: number;
+}
+
+export interface Penalty {
+  penaltyType: number;
+  infringementType: number;
+  vehicleIdx: number;
+  otherVehicleIdx: number;
+  time: number;
+  lapNum: number;
+  placesGained: number;
+}
+
+export interface SpeedTrap {
+  vehicleIdx: number;
+  speed: number;
+  isOverallFastestInSession: number;
+  isDriverFastestInSession: number;
+  fastestVehicleIdxInSession: number;
+  fastestSpeedInSession: number;
+}
+
+export interface StartLights {
+  numLights: number;
+}
+
+export interface DriveThroughPenaltyServed {
+  vehicleIdx: number;
+}
+
+export interface StopGoPenaltyServed {
+  vehicleIdx: number;
+  stopTime?: number;
+}
+
+export interface Flashback {
+  flashbackFrameIdentifier: number;
+  flashbackSessionTime: number;
+}
+
+export interface Buttons {
+  buttonStatus: number;
+}
+
+export interface Overtake {
+  overtakingVehicleIdx: number;
+  beingOvertakenVehicleIdx: number;
+}
+
+export interface SafetyCar {
+  safetyCarType: number;
+  eventType: number;
+}
+
+export interface Collision {
+  vehicle1Idx: number;
+  vehicle2Idx: number;
+}
+
+
+export class FastestLapParser extends F1Parser<FastestLap> {
   constructor() {
     super();
 
@@ -14,7 +94,7 @@ export class FastestLapParser extends F1Parser {
   }
 }
 
-export class RetirementParser extends F1Parser {
+export class RetirementParser extends F1Parser<Retirement> {
   constructor(packetFormat: number) {
     super();
 
@@ -26,7 +106,7 @@ export class RetirementParser extends F1Parser {
   }
 }
 
-export class DRSDisabledParser extends F1Parser {
+export class DRSDisabledParser extends F1Parser<DRSDisabled> {
   constructor() {
     super();
 
@@ -34,7 +114,7 @@ export class DRSDisabledParser extends F1Parser {
   }
 }
 
-export class TeamMateInPitsParser extends F1Parser {
+export class TeamMateInPitsParser extends F1Parser<TeamMateInPits> {
   constructor() {
     super();
 
@@ -42,7 +122,7 @@ export class TeamMateInPitsParser extends F1Parser {
   }
 }
 
-export class RaceWinnerParser extends F1Parser {
+export class RaceWinnerParser extends F1Parser<RaceWinner> {
   constructor() {
     super();
 
@@ -50,7 +130,7 @@ export class RaceWinnerParser extends F1Parser {
   }
 }
 
-export class PenaltyParser extends F1Parser {
+export class PenaltyParser extends F1Parser<Penalty> {
   constructor() {
     super();
 
@@ -65,7 +145,7 @@ export class PenaltyParser extends F1Parser {
   }
 }
 
-export class SpeedTrapParser extends F1Parser {
+export class SpeedTrapParser extends F1Parser<SpeedTrap> {
   constructor() {
     super();
 
@@ -79,7 +159,7 @@ export class SpeedTrapParser extends F1Parser {
   }
 }
 
-export class StartLightsParser extends F1Parser {
+export class StartLightsParser extends F1Parser<StartLights> {
   constructor() {
     super();
 
@@ -87,7 +167,7 @@ export class StartLightsParser extends F1Parser {
   }
 }
 
-export class DriveThroughPenaltyServedParser extends F1Parser {
+export class DriveThroughPenaltyServedParser extends F1Parser<DriveThroughPenaltyServed> {
   constructor() {
     super();
 
@@ -95,7 +175,7 @@ export class DriveThroughPenaltyServedParser extends F1Parser {
   }
 }
 
-export class StopGoPenaltyServedParser extends F1Parser {
+export class StopGoPenaltyServedParser extends F1Parser<StopGoPenaltyServed> {
   constructor(packetFormat: number) {
     super();
 
@@ -106,7 +186,7 @@ export class StopGoPenaltyServedParser extends F1Parser {
   }
 }
 
-export class FlashbackParser extends F1Parser {
+export class FlashbackParser extends F1Parser<Flashback> {
   constructor() {
     super();
 
@@ -116,7 +196,7 @@ export class FlashbackParser extends F1Parser {
   }
 }
 
-export class ButtonsParser extends F1Parser {
+export class ButtonsParser extends F1Parser<Buttons> {
   constructor() {
     super();
 
@@ -124,7 +204,7 @@ export class ButtonsParser extends F1Parser {
   }
 }
 
-export class OvertakeParser extends F1Parser {
+export class OvertakeParser extends F1Parser<Overtake> {
   constructor() {
     super();
 
@@ -134,7 +214,7 @@ export class OvertakeParser extends F1Parser {
   }
 }
 
-export class SafetyCarParser extends F1Parser {
+export class SafetyCarParser extends F1Parser<SafetyCar> {
   constructor() {
     super();
 
@@ -142,7 +222,7 @@ export class SafetyCarParser extends F1Parser {
   }
 }
 
-export class CollisionParser extends F1Parser {
+export class CollisionParser extends F1Parser<Collision> {
   constructor() {
     super();
 
@@ -150,181 +230,205 @@ export class CollisionParser extends F1Parser {
   }
 }
 
-export class PacketEventDataParser extends F1Parser {
-  data: PacketEventData;
+export class PacketEventDataParser extends F1Parser<PacketEventData> {
 
-  constructor(buffer: Buffer, packetFormat: number) {
+  constructor(packetFormat: number) {
     super();
 
-    this.endianess('little').nest('m_header', {
-      type: new PacketHeaderParser(packetFormat),
+    this.useContextVars(true)
+      .endianess('little').nest('m_header', {
+        type: new PacketHeaderParser(),
+      })
+      .string('m_eventStringCode', {
+        length: 4,
+        formatter: function (item) {
+          (this as any).m_eventStringCodeId = EVENT_CODES_INDEX[item];
+          return item;
+        }
+      });
+    this.choice({
+      tag: 'm_eventStringCodeId',
+      choices: {
+        [EVENT_CODES_INDEX[EVENT_CODES.FastestLap]]: new FastestLapParser(),
+        [EVENT_CODES_INDEX[EVENT_CODES.Retirement]]: new RetirementParser(packetFormat),
+        [EVENT_CODES_INDEX[EVENT_CODES.DRSDisabled]]: new DRSDisabledParser(),
+        [EVENT_CODES_INDEX[EVENT_CODES.TeammateInPits]]: new TeamMateInPitsParser(),
+        [EVENT_CODES_INDEX[EVENT_CODES.RaceWinner]]: new RaceWinnerParser(),
+        [EVENT_CODES_INDEX[EVENT_CODES.PenaltyIssued]]: new PenaltyParser(),
+        [EVENT_CODES_INDEX[EVENT_CODES.SpeedTrapTriggered]]: new SpeedTrapParser(),
+        [EVENT_CODES_INDEX[EVENT_CODES.StartLights]]: new StartLightsParser(),
+        [EVENT_CODES_INDEX[EVENT_CODES.DriveThroughServed]]: new DriveThroughPenaltyServedParser(),
+        [EVENT_CODES_INDEX[EVENT_CODES.StopGoServed]]: new StopGoPenaltyServedParser(packetFormat),
+        [EVENT_CODES_INDEX[EVENT_CODES.Flashback]]: new FlashbackParser(),
+        [EVENT_CODES_INDEX[EVENT_CODES.ButtonStatus]]: new ButtonsParser(),
+        [EVENT_CODES_INDEX[EVENT_CODES.Overtake]]: new OvertakeParser(),
+        [EVENT_CODES_INDEX[EVENT_CODES.SafetyCar]]: new SafetyCarParser(),
+        [EVENT_CODES_INDEX[EVENT_CODES.Collision]]: new CollisionParser(),
+      },
+      defaultChoice: Parser.start(),
     });
 
-    this.string('m_eventStringCode', { length: 4 });
+    // if (packetFormat === 2022) {
+    //   this.unpack2022Format(packetFormat);
+    // }
 
-    if (packetFormat === 2022) {
-      this.unpack2022Format(buffer, packetFormat);
-    }
+    // if (packetFormat === 2023) {
+    //   this.unpack2023Format(packetFormat);
+    // }
 
-    if (packetFormat === 2023) {
-      this.unpack2023Format(buffer, packetFormat);
-    }
+    // if (packetFormat === 2024) {
+    //   this.unpack2024Format(packetFormat);
+    // }
 
-    if (packetFormat === 2024) {
-      this.unpack2024Format(buffer, packetFormat);
-    }
-
-    if (packetFormat === 2025) {
-      this.unpack2025Format(buffer, packetFormat);
-    }
-
-    this.data = this.fromBuffer(buffer);
+    // if (packetFormat === 2025) {
+    //   this.unpack2025Format(packetFormat);
+    // }
   }
 
-  unpack2022Format = (buffer: Buffer, packetFormat: number) => {
-    const eventStringCode = this.getEventStringCode(buffer, packetFormat);
+  // unpack2022Format = (packetFormat: number) => {
+  //   const eventStringCode = this.getEventStringCode(buffer, packetFormat);
 
-    if (eventStringCode === EVENT_CODES.FastestLap) {
-      this.nest('m_eventDetails', { type: new FastestLapParser() });
-    } else if (eventStringCode === EVENT_CODES.Retirement) {
-      this.nest('m_eventDetails', { type: new RetirementParser(packetFormat) });
-    } else if (eventStringCode === EVENT_CODES.TeammateInPits) {
-      this.nest('m_eventDetails', { type: new TeamMateInPitsParser() });
-    } else if (eventStringCode === EVENT_CODES.RaceWinner) {
-      this.nest('m_eventDetails', { type: new RaceWinnerParser() });
-    } else if (eventStringCode === EVENT_CODES.PenaltyIssued) {
-      this.nest('m_eventDetails', { type: new PenaltyParser() });
-    } else if (eventStringCode === EVENT_CODES.SpeedTrapTriggered) {
-      this.nest('m_eventDetails', { type: new SpeedTrapParser() });
-    } else if (eventStringCode === EVENT_CODES.StartLights) {
-      this.nest('m_eventDetails', { type: new StartLightsParser() });
-    } else if (eventStringCode === EVENT_CODES.DriveThroughServed) {
-      this.nest('m_eventDetails', {
-        type: new DriveThroughPenaltyServedParser(),
-      });
-    } else if (eventStringCode === EVENT_CODES.StopGoServed) {
-      this.nest('m_eventDetails', { type: new StopGoPenaltyServedParser(packetFormat) });
-    } else if (eventStringCode === EVENT_CODES.Flashback) {
-      this.nest('m_eventDetails', { type: new FlashbackParser() });
-    } else if (eventStringCode === EVENT_CODES.ButtonStatus) {
-      this.nest('m_eventDetails', { type: new ButtonsParser() });
-    }
-  };
+  //   if (eventStringCode === EVENT_CODES.FastestLap) {
+  //     this.nest('m_eventDetails', { type: new FastestLapParser() });
+  //   } else if (eventStringCode === EVENT_CODES.Retirement) {
+  //     this.nest('m_eventDetails', { type: new RetirementParser(packetFormat) });
+  //   } else if (eventStringCode === EVENT_CODES.TeammateInPits) {
+  //     this.nest('m_eventDetails', { type: new TeamMateInPitsParser() });
+  //   } else if (eventStringCode === EVENT_CODES.RaceWinner) {
+  //     this.nest('m_eventDetails', { type: new RaceWinnerParser() });
+  //   } else if (eventStringCode === EVENT_CODES.PenaltyIssued) {
+  //     this.nest('m_eventDetails', { type: new PenaltyParser() });
+  //   } else if (eventStringCode === EVENT_CODES.SpeedTrapTriggered) {
+  //     this.nest('m_eventDetails', { type: new SpeedTrapParser() });
+  //   } else if (eventStringCode === EVENT_CODES.StartLights) {
+  //     this.nest('m_eventDetails', { type: new StartLightsParser() });
+  //   } else if (eventStringCode === EVENT_CODES.DriveThroughServed) {
+  //     this.nest('m_eventDetails', {
+  //       type: new DriveThroughPenaltyServedParser(),
+  //     });
+  //   } else if (eventStringCode === EVENT_CODES.StopGoServed) {
+  //     this.nest('m_eventDetails', { type: new StopGoPenaltyServedParser(packetFormat) });
+  //   } else if (eventStringCode === EVENT_CODES.Flashback) {
+  //     this.nest('m_eventDetails', { type: new FlashbackParser() });
+  //   } else if (eventStringCode === EVENT_CODES.ButtonStatus) {
+  //     this.nest('m_eventDetails', { type: new ButtonsParser() });
+  //   }
+  // };
 
-  unpack2023Format = (buffer: Buffer, packetFormat: number) => {
-    const eventStringCode = this.getEventStringCode(buffer, packetFormat);
+  // unpack2023Format = (packetFormat: number) => {
+  //   const eventStringCode = this.getEventStringCode(buffer, packetFormat);
 
-    if (eventStringCode === EVENT_CODES.FastestLap) {
-      this.nest('m_eventDetails', { type: new FastestLapParser() });
-    } else if (eventStringCode === EVENT_CODES.Retirement) {
-      this.nest('m_eventDetails', { type: new RetirementParser(packetFormat) });
-    } else if (eventStringCode === EVENT_CODES.TeammateInPits) {
-      this.nest('m_eventDetails', { type: new TeamMateInPitsParser() });
-    } else if (eventStringCode === EVENT_CODES.RaceWinner) {
-      this.nest('m_eventDetails', { type: new RaceWinnerParser() });
-    } else if (eventStringCode === EVENT_CODES.PenaltyIssued) {
-      this.nest('m_eventDetails', { type: new PenaltyParser() });
-    } else if (eventStringCode === EVENT_CODES.SpeedTrapTriggered) {
-      this.nest('m_eventDetails', { type: new SpeedTrapParser() });
-    } else if (eventStringCode === EVENT_CODES.StartLights) {
-      this.nest('m_eventDetails', { type: new StartLightsParser() });
-    } else if (eventStringCode === EVENT_CODES.DriveThroughServed) {
-      this.nest('m_eventDetails', {
-        type: new DriveThroughPenaltyServedParser(),
-      });
-    } else if (eventStringCode === EVENT_CODES.StopGoServed) {
-      this.nest('m_eventDetails', { type: new StopGoPenaltyServedParser(packetFormat) });
-    } else if (eventStringCode === EVENT_CODES.Flashback) {
-      this.nest('m_eventDetails', { type: new FlashbackParser() });
-    } else if (eventStringCode === EVENT_CODES.ButtonStatus) {
-      this.nest('m_eventDetails', { type: new ButtonsParser() });
-    } else if (eventStringCode === EVENT_CODES.Overtake) {
-      this.nest('m_eventDetails', { type: new OvertakeParser() });
-    }
-  };
+  //   if (eventStringCode === EVENT_CODES.FastestLap) {
+  //     this.nest('m_eventDetails', { type: new FastestLapParser() });
+  //   } else if (eventStringCode === EVENT_CODES.Retirement) {
+  //     this.nest('m_eventDetails', { type: new RetirementParser(packetFormat) });
+  //   } else if (eventStringCode === EVENT_CODES.TeammateInPits) {
+  //     this.nest('m_eventDetails', { type: new TeamMateInPitsParser() });
+  //   } else if (eventStringCode === EVENT_CODES.RaceWinner) {
+  //     this.nest('m_eventDetails', { type: new RaceWinnerParser() });
+  //   } else if (eventStringCode === EVENT_CODES.PenaltyIssued) {
+  //     this.nest('m_eventDetails', { type: new PenaltyParser() });
+  //   } else if (eventStringCode === EVENT_CODES.SpeedTrapTriggered) {
+  //     this.nest('m_eventDetails', { type: new SpeedTrapParser() });
+  //   } else if (eventStringCode === EVENT_CODES.StartLights) {
+  //     this.nest('m_eventDetails', { type: new StartLightsParser() });
+  //   } else if (eventStringCode === EVENT_CODES.DriveThroughServed) {
+  //     this.nest('m_eventDetails', {
+  //       type: new DriveThroughPenaltyServedParser(),
+  //     });
+  //   } else if (eventStringCode === EVENT_CODES.StopGoServed) {
+  //     this.nest('m_eventDetails', { type: new StopGoPenaltyServedParser(packetFormat) });
+  //   } else if (eventStringCode === EVENT_CODES.Flashback) {
+  //     this.nest('m_eventDetails', { type: new FlashbackParser() });
+  //   } else if (eventStringCode === EVENT_CODES.ButtonStatus) {
+  //     this.nest('m_eventDetails', { type: new ButtonsParser() });
+  //   } else if (eventStringCode === EVENT_CODES.Overtake) {
+  //     this.nest('m_eventDetails', { type: new OvertakeParser() });
+  //   }
+  // };
 
-  unpack2024Format = (buffer: Buffer, packetFormat: number) => {
-    const eventStringCode = this.getEventStringCode(buffer, packetFormat);
+  // unpack2024Format = (packetFormat: number) => {
+  //   const eventStringCode = this.getEventStringCode(buffer, packetFormat);
 
-    if (eventStringCode === EVENT_CODES.FastestLap) {
-      this.nest('m_eventDetails', { type: new FastestLapParser() });
-    } else if (eventStringCode === EVENT_CODES.Retirement) {
-      this.nest('m_eventDetails', { type: new RetirementParser(packetFormat) });
-    } else if (eventStringCode === EVENT_CODES.TeammateInPits) {
-      this.nest('m_eventDetails', { type: new TeamMateInPitsParser() });
-    } else if (eventStringCode === EVENT_CODES.RaceWinner) {
-      this.nest('m_eventDetails', { type: new RaceWinnerParser() });
-    } else if (eventStringCode === EVENT_CODES.PenaltyIssued) {
-      this.nest('m_eventDetails', { type: new PenaltyParser() });
-    } else if (eventStringCode === EVENT_CODES.SpeedTrapTriggered) {
-      this.nest('m_eventDetails', { type: new SpeedTrapParser() });
-    } else if (eventStringCode === EVENT_CODES.StartLights) {
-      this.nest('m_eventDetails', { type: new StartLightsParser() });
-    } else if (eventStringCode === EVENT_CODES.DriveThroughServed) {
-      this.nest('m_eventDetails', {
-        type: new DriveThroughPenaltyServedParser(),
-      });
-    } else if (eventStringCode === EVENT_CODES.StopGoServed) {
-      this.nest('m_eventDetails', { type: new StopGoPenaltyServedParser(packetFormat) });
-    } else if (eventStringCode === EVENT_CODES.Flashback) {
-      this.nest('m_eventDetails', { type: new FlashbackParser() });
-    } else if (eventStringCode === EVENT_CODES.ButtonStatus) {
-      this.nest('m_eventDetails', { type: new ButtonsParser() });
-    } else if (eventStringCode === EVENT_CODES.Overtake) {
-      this.nest('m_eventDetails', { type: new OvertakeParser() });
-    } else if (eventStringCode === EVENT_CODES.SafetyCar) {
-      this.nest('m_eventDetails', { type: new SafetyCarParser() });
-    } else if (eventStringCode === EVENT_CODES.Collision) {
-      this.nest('m_eventDetails', { type: new CollisionParser() });
-    }
-  };
+  //   if (eventStringCode === EVENT_CODES.FastestLap) {
+  //     this.nest('m_eventDetails', { type: new FastestLapParser() });
+  //   } else if (eventStringCode === EVENT_CODES.Retirement) {
+  //     this.nest('m_eventDetails', { type: new RetirementParser(packetFormat) });
+  //   } else if (eventStringCode === EVENT_CODES.TeammateInPits) {
+  //     this.nest('m_eventDetails', { type: new TeamMateInPitsParser() });
+  //   } else if (eventStringCode === EVENT_CODES.RaceWinner) {
+  //     this.nest('m_eventDetails', { type: new RaceWinnerParser() });
+  //   } else if (eventStringCode === EVENT_CODES.PenaltyIssued) {
+  //     this.nest('m_eventDetails', { type: new PenaltyParser() });
+  //   } else if (eventStringCode === EVENT_CODES.SpeedTrapTriggered) {
+  //     this.nest('m_eventDetails', { type: new SpeedTrapParser() });
+  //   } else if (eventStringCode === EVENT_CODES.StartLights) {
+  //     this.nest('m_eventDetails', { type: new StartLightsParser() });
+  //   } else if (eventStringCode === EVENT_CODES.DriveThroughServed) {
+  //     this.nest('m_eventDetails', {
+  //       type: new DriveThroughPenaltyServedParser(),
+  //     });
+  //   } else if (eventStringCode === EVENT_CODES.StopGoServed) {
+  //     this.nest('m_eventDetails', { type: new StopGoPenaltyServedParser(packetFormat) });
+  //   } else if (eventStringCode === EVENT_CODES.Flashback) {
+  //     this.nest('m_eventDetails', { type: new FlashbackParser() });
+  //   } else if (eventStringCode === EVENT_CODES.ButtonStatus) {
+  //     this.nest('m_eventDetails', { type: new ButtonsParser() });
+  //   } else if (eventStringCode === EVENT_CODES.Overtake) {
+  //     this.nest('m_eventDetails', { type: new OvertakeParser() });
+  //   } else if (eventStringCode === EVENT_CODES.SafetyCar) {
+  //     this.nest('m_eventDetails', { type: new SafetyCarParser() });
+  //   } else if (eventStringCode === EVENT_CODES.Collision) {
+  //     this.nest('m_eventDetails', { type: new CollisionParser() });
+  //   }
+  // };
 
-  unpack2025Format = (buffer: Buffer, packetFormat: number) => {
-    const eventStringCode = this.getEventStringCode(buffer, packetFormat);
+  // unpack2025Format = (packetFormat: number) => {
+  //   const eventStringCode = this.getEventStringCode(buffer, packetFormat);
 
-    if (eventStringCode === EVENT_CODES.FastestLap) {
-      this.nest('m_eventDetails', { type: new FastestLapParser() });
-    } else if (eventStringCode === EVENT_CODES.Retirement) {
-      this.nest('m_eventDetails', { type: new RetirementParser(packetFormat) });
-    } else if (eventStringCode === EVENT_CODES.DRSDisabled) {
-      this.nest('m_eventDetails', { type: new DRSDisabledParser() });
-    } else if (eventStringCode === EVENT_CODES.TeammateInPits) {
-      this.nest('m_eventDetails', { type: new TeamMateInPitsParser() });
-    } else if (eventStringCode === EVENT_CODES.RaceWinner) {
-      this.nest('m_eventDetails', { type: new RaceWinnerParser() });
-    } else if (eventStringCode === EVENT_CODES.PenaltyIssued) {
-      this.nest('m_eventDetails', { type: new PenaltyParser() });
-    } else if (eventStringCode === EVENT_CODES.SpeedTrapTriggered) {
-      this.nest('m_eventDetails', { type: new SpeedTrapParser() });
-    } else if (eventStringCode === EVENT_CODES.StartLights) {
-      this.nest('m_eventDetails', { type: new StartLightsParser() });
-    } else if (eventStringCode === EVENT_CODES.DriveThroughServed) {
-      this.nest('m_eventDetails', {
-        type: new DriveThroughPenaltyServedParser(),
-      });
-    } else if (eventStringCode === EVENT_CODES.StopGoServed) {
-      this.nest('m_eventDetails', { type: new StopGoPenaltyServedParser(packetFormat) });
-    } else if (eventStringCode === EVENT_CODES.Flashback) {
-      this.nest('m_eventDetails', { type: new FlashbackParser() });
-    } else if (eventStringCode === EVENT_CODES.ButtonStatus) {
-      this.nest('m_eventDetails', { type: new ButtonsParser() });
-    } else if (eventStringCode === EVENT_CODES.Overtake) {
-      this.nest('m_eventDetails', { type: new OvertakeParser() });
-    } else if (eventStringCode === EVENT_CODES.SafetyCar) {
-      this.nest('m_eventDetails', { type: new SafetyCarParser() });
-    } else if (eventStringCode === EVENT_CODES.Collision) {
-      this.nest('m_eventDetails', { type: new CollisionParser() });
-    }
-  };
+  //   if (eventStringCode === EVENT_CODES.FastestLap) {
+  //     this.nest('m_eventDetails', { type: new FastestLapParser() });
+  //   } else if (eventStringCode === EVENT_CODES.Retirement) {
+  //     this.nest('m_eventDetails', { type: new RetirementParser(packetFormat) });
+  //   } else if (eventStringCode === EVENT_CODES.DRSDisabled) {
+  //     this.nest('m_eventDetails', { type: new DRSDisabledParser() });
+  //   } else if (eventStringCode === EVENT_CODES.TeammateInPits) {
+  //     this.nest('m_eventDetails', { type: new TeamMateInPitsParser() });
+  //   } else if (eventStringCode === EVENT_CODES.RaceWinner) {
+  //     this.nest('m_eventDetails', { type: new RaceWinnerParser() });
+  //   } else if (eventStringCode === EVENT_CODES.PenaltyIssued) {
+  //     this.nest('m_eventDetails', { type: new PenaltyParser() });
+  //   } else if (eventStringCode === EVENT_CODES.SpeedTrapTriggered) {
+  //     this.nest('m_eventDetails', { type: new SpeedTrapParser() });
+  //   } else if (eventStringCode === EVENT_CODES.StartLights) {
+  //     this.nest('m_eventDetails', { type: new StartLightsParser() });
+  //   } else if (eventStringCode === EVENT_CODES.DriveThroughServed) {
+  //     this.nest('m_eventDetails', {
+  //       type: new DriveThroughPenaltyServedParser(),
+  //     });
+  //   } else if (eventStringCode === EVENT_CODES.StopGoServed) {
+  //     this.nest('m_eventDetails', { type: new StopGoPenaltyServedParser(packetFormat) });
+  //   } else if (eventStringCode === EVENT_CODES.Flashback) {
+  //     this.nest('m_eventDetails', { type: new FlashbackParser() });
+  //   } else if (eventStringCode === EVENT_CODES.ButtonStatus) {
+  //     this.nest('m_eventDetails', { type: new ButtonsParser() });
+  //   } else if (eventStringCode === EVENT_CODES.Overtake) {
+  //     this.nest('m_eventDetails', { type: new OvertakeParser() });
+  //   } else if (eventStringCode === EVENT_CODES.SafetyCar) {
+  //     this.nest('m_eventDetails', { type: new SafetyCarParser() });
+  //   } else if (eventStringCode === EVENT_CODES.Collision) {
+  //     this.nest('m_eventDetails', { type: new CollisionParser() });
+  //   }
+  // };
 
-  getEventStringCode = (buffer: Buffer, packetFormat: number) => {
-    const headerParser = new Parser()
-      .endianess('little')
-      .nest('m_header', {
-        type: new PacketHeaderParser(packetFormat),
-      })
-      .string('m_eventStringCode', { length: 4 });
-    const { m_eventStringCode } = headerParser.parse(buffer);
-    return m_eventStringCode;
-  };
+  // getEventStringCode = (buffer: Buffer, packetFormat: number) => {
+  //   const headerParser = new Parser()
+  //     .endianess('little')
+  //     .nest('m_header', {
+  //       type: new PacketHeaderParser(packetFormat),
+  //     })
+  //     .string('m_eventStringCode', { length: 4 });
+  //   const { m_eventStringCode } = headerParser.parse(buffer);
+  //   return m_eventStringCode;
+  // };
 }

@@ -17,6 +17,8 @@ import {
   PacketLapPositionsDataParser,
 } from './parsers/packets';
 
+import { PacketTimeTrialData, PacketMotionExData, PacketTyreSetsData, PacketSessionHistoryData, PacketSessionData, PacketMotionData, PacketLapData, PacketEventData, PacketParticipantsData, PacketCarSetupData, PacketCarTelemetryData, PacketCarStatusData, PacketCarDamageData, PacketFinalClassificationData, PacketLobbyInfoData, PacketLapPositionsData } from './parsers/packets/types';
+
 export interface Options {
   port?: number;
   forwardAddresses?: Address[] | undefined;
@@ -36,24 +38,41 @@ export interface Address {
   ip?: string;
 }
 
+export type Parsers = PacketTimeTrialDataParser
+  | PacketMotionExDataParser
+  | PacketTyreSetsDataParser
+  | PacketSessionHistoryDataParser
+  | PacketSessionDataParser
+  | PacketMotionDataParser
+  | PacketLapDataParser
+  | PacketEventDataParser
+  | PacketParticipantsDataParser
+  | PacketCarSetupDataParser
+  | PacketCarTelemetryDataParser
+  | PacketCarStatusDataParser
+  | PacketCarDamageDataParser
+  | PacketFinalClassificationDataParser
+  | PacketLobbyInfoDataParser
+  | PacketLapPositionsDataParser;
+
 export interface ParsedMessage {
   packetID: string;
   packetData:
-    | PacketTimeTrialDataParser
-    | PacketMotionExDataParser
-    | PacketTyreSetsDataParser
-    | PacketSessionHistoryDataParser
-    | PacketSessionDataParser
-    | PacketMotionDataParser
-    | PacketLapDataParser
-    | PacketEventDataParser
-    | PacketParticipantsDataParser
-    | PacketCarSetupDataParser
-    | PacketCarTelemetryDataParser
-    | PacketCarStatusDataParser
-    | PacketCarDamageDataParser
-    | PacketFinalClassificationDataParser
-    | PacketLobbyInfoDataParser
-    | PacketLapPositionsDataParser
-    | null;
+  | PacketTimeTrialData
+  | PacketMotionExData
+  | PacketTyreSetsData
+  | PacketSessionHistoryData
+  | PacketSessionData
+  | PacketMotionData
+  | PacketLapData
+  | PacketEventData
+  | PacketParticipantsData
+  | PacketCarSetupData
+  | PacketCarTelemetryData
+  | PacketCarStatusData
+  | PacketCarDamageData
+  | PacketFinalClassificationData
+  | PacketLobbyInfoData
+  | PacketLapPositionsData
+  | null;
 }

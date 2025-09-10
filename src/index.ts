@@ -1,7 +1,7 @@
 // tslint:disable-next-line
 import * as dgram from 'dgram';
-import {EventEmitter} from 'events';
-import {AddressInfo} from 'net';
+import { EventEmitter } from 'events';
+import { AddressInfo } from 'net';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
@@ -29,7 +29,7 @@ import {
   PacketLapPositionsDataParser,
 } from './parsers/packets';
 import * as packetTypes from './parsers/packets/types';
-import {Address, Options, ParsedMessage, TestMode} from './types';
+import { Address, Options, ParsedMessage, TestMode } from './types';
 
 const DEFAULT_PORT = 20777;
 const FORWARD_ADDRESSES = undefined;
@@ -38,6 +38,8 @@ const FORWARD_ADDRESSES = undefined;
  *
  */
 class F1TelemetryClient extends EventEmitter {
+  static parserCache: { [packetFormat: number]: Map<number, any>; } = {};
+
   port: number;
   forwardAddresses?: Address[];
   socket?: dgram.Socket;
@@ -55,7 +57,10 @@ class F1TelemetryClient extends EventEmitter {
 
     this.port = port;
     this.forwardAddresses = forwardAddresses;
-    this.socket = dgram.createSocket('udp4');
+    this.socket = dgram.createSocket({
+      type: 'udp4',
+      reuseAddr: true,
+    });
 
     this.testModeActive = testModeActive;
     if (testModeActive) this.testMode = initializeTestMode.call(this);
@@ -66,20 +71,31 @@ class F1TelemetryClient extends EventEmitter {
    * @param {Buffer} message
    */
   static parseBufferMessage(message: Buffer): ParsedMessage | undefined {
-    const {m_packetFormat, m_packetId} =
+    const { m_packetFormat, m_packetId } =
       F1TelemetryClient.parsePacketHeader(message);
 
-    const parser = F1TelemetryClient.getParserByPacketId(m_packetId);
-
+    let cache = F1TelemetryClient.parserCache[m_packetFormat];
+    if (!cache) {
+      cache = new Map();
+      F1TelemetryClient.parserCache[m_packetFormat] = cache;
+    }
+    let parser = cache.get(m_packetId);
     if (!parser) {
-      return;
+      const parserType = F1TelemetryClient.getParserByPacketId(m_packetId);
+
+      if (!parserType) {
+        return;
+      }
+
+      parser = new parserType(m_packetFormat);
+      cache.set(m_packetId, parser);
     }
 
-    const packetData = new parser(message, m_packetFormat);
+    const packetData = parser.fromBuffer(message);
     const packetID = Object.keys(constants.PACKETS)[m_packetId];
 
     // emit parsed message
-    return {packetData, packetID};
+    return { packetData, packetID };
   }
 
   /**
@@ -88,12 +104,8 @@ class F1TelemetryClient extends EventEmitter {
    */
   static parsePacketHeader(
     buffer: Buffer
-    // tslint:disable-next-line:no-any
   ): any {
-    const packetFormatParser = new PacketFormatParser();
-    const {m_packetFormat} = packetFormatParser.fromBuffer(buffer);
-    const packetHeaderParser = new PacketHeaderParser(m_packetFormat);
-    return packetHeaderParser.fromBuffer(buffer);
+    return PacketHeaderParser.PARSER.fromBuffer(buffer);
   }
 
   /**
@@ -102,7 +114,7 @@ class F1TelemetryClient extends EventEmitter {
    * @param {Number} packetId
    */
   static getPacketSize(packetFormat: number, packetId: number) {
-    const {PACKET_SIZES} = constants;
+    const { PACKET_SIZES } = constants;
     const packetValues = Object.values(PACKET_SIZES);
     return packetValues[packetId][packetFormat];
   }
@@ -112,7 +124,7 @@ class F1TelemetryClient extends EventEmitter {
    * @param {Number} packetId
    */
   static getParserByPacketId(packetId: number) {
-    const {PACKETS} = constants;
+    const { PACKETS } = constants;
 
     const packetKeys = Object.keys(PACKETS);
     const packetType = packetKeys[packetId];
@@ -188,14 +200,14 @@ class F1TelemetryClient extends EventEmitter {
     }
 
     // emit parsed message
-    this.emit(parsedMessage.packetID, parsedMessage.packetData.data);
+    this.emit(parsedMessage.packetID, parsedMessage.packetData);
   }
   /**
    *
    * @param {Buffer} message
    */
   handleTestModeMessage(message: Buffer) {
-    const {testMode} = this;
+    const { testMode } = this;
     if (!testMode) return;
 
     testMode.bufferStream.write(`${JSON.stringify(message.toJSON().data)},\n`);

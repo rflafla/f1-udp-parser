@@ -3,21 +3,19 @@ import {CarDamageDataParser} from './CarDamageDataParser';
 import {PacketHeaderParser} from './PacketHeaderParser';
 import {PacketCarDamageData} from './types';
 
-export class PacketCarDamageDataParser extends F1Parser {
-  data: PacketCarDamageData;
+export class PacketCarDamageDataParser extends F1Parser<PacketCarDamageData> {
 
-  constructor(buffer: Buffer, packetFormat: number) {
+  constructor(packetFormat: number) {
     super();
 
     this.endianess('little')
       .nest('m_header', {
-        type: new PacketHeaderParser(packetFormat),
+        type: new PacketHeaderParser(),
       })
       .array('m_carDamageData', {
         length: 22,
         type: new CarDamageDataParser(packetFormat),
       });
 
-    this.data = this.fromBuffer(buffer);
   }
 }

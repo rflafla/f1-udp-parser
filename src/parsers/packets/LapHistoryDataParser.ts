@@ -1,6 +1,7 @@
 import {F1Parser} from '../F1Parser';
+import { LapHistoryData } from './types';
 
-export class LapHistoryDataParser extends F1Parser {
+export class LapHistoryDataParser extends F1Parser<LapHistoryData> {
   constructor(packetFormat: number) {
     super();
     this.endianess('little').uint32('m_lapTimeInMS');

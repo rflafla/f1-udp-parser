@@ -1,18 +1,16 @@
-import {Parser} from 'binary-parser';
-import {F1Parser} from '../F1Parser';
-import {CarMotionDataParser} from './CarMotionDataParser';
-import {PacketHeaderParser} from './PacketHeaderParser';
-import {PacketMotionData} from './types';
+import { Parser } from 'binary-parser';
+import { F1Parser } from '../F1Parser';
+import { CarMotionDataParser } from './CarMotionDataParser';
+import { PacketHeaderParser } from './PacketHeaderParser';
+import { PacketMotionData } from './types';
 
-export class PacketMotionDataParser extends F1Parser {
-  data: PacketMotionData;
-
-  constructor(buffer: Buffer, packetFormat: number) {
+export class PacketMotionDataParser extends F1Parser<PacketMotionData> {
+  constructor(packetFormat: number) {
     super();
 
     this.endianess('little')
       .nest('m_header', {
-        type: new PacketHeaderParser(packetFormat),
+        type: new PacketHeaderParser(),
       })
       .array('m_carMotionData', {
         length: 22,
@@ -51,7 +49,5 @@ export class PacketMotionDataParser extends F1Parser {
         .floatle('m_angularAccelerationZ')
         .floatle('m_frontWheelsAngle');
     }
-
-    this.data = this.fromBuffer(buffer);
   }
 }

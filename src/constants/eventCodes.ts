@@ -1,6 +1,6 @@
-import {EventCode} from './types';
+import { EventCode } from './types';
 
-export const EVENT_CODES: {[index: string]: EventCode} = {
+export const EVENT_CODES: { [index: string]: EventCode; } = {
   SessionStarted: 'SSTA',
   SessionEnded: 'SEND',
   FastestLap: 'FTLP',
@@ -23,3 +23,9 @@ export const EVENT_CODES: {[index: string]: EventCode} = {
   SafetyCar: 'SCAR',
   Collision: 'COLL',
 };
+
+export const EVENT_CODES_INDEX: { [key: string]: number; } = {};
+let i = 0;
+for (const key of Object.values(EVENT_CODES)) {
+  EVENT_CODES_INDEX[key] = i++;
+}

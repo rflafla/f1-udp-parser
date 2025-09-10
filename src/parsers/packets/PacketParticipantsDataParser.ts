@@ -3,14 +3,12 @@ import {PacketHeaderParser} from './PacketHeaderParser';
 import {ParticipantDataParser} from './ParticipantDataParser';
 import {PacketParticipantsData} from './types';
 
-export class PacketParticipantsDataParser extends F1Parser {
-  data: PacketParticipantsData;
-
-  constructor(buffer: Buffer, packetFormat: number) {
+export class PacketParticipantsDataParser extends F1Parser<PacketParticipantsData> {
+  constructor(packetFormat: number) {
     super();
 
     this.endianess('little').nest('m_header', {
-      type: new PacketHeaderParser(packetFormat),
+      type: new PacketHeaderParser(),
     });
 
     this.uint8('m_numActiveCars');
@@ -19,7 +17,5 @@ export class PacketParticipantsDataParser extends F1Parser {
       length: 22,
       type: new ParticipantDataParser(packetFormat),
     });
-
-    this.data = this.fromBuffer(buffer);
   }
 }

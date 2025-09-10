@@ -1,6 +1,7 @@
 import {F1Parser} from '../F1Parser';
+import { TimeTrialDataSet } from './types';
 
-export class TimeTrialDataSetParser extends F1Parser {
+export class TimeTrialDataSetParser extends F1Parser<TimeTrialDataSet> {
   constructor() {
     super();
     this.endianess('little')

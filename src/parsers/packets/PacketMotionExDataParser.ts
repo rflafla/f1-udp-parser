@@ -3,15 +3,13 @@ import { F1Parser } from '../F1Parser';
 import { PacketHeaderParser } from './PacketHeaderParser';
 import { PacketMotionExData } from './types';
 
-export class PacketMotionExDataParser extends F1Parser {
-  data: PacketMotionExData;
-
-  constructor(buffer: Buffer, packetFormat: number) {
+export class PacketMotionExDataParser extends F1Parser<PacketMotionExData> {
+  constructor(packetFormat: number) {
     super();
 
     this.endianess('little')
       .nest('m_header', {
-        type: new PacketHeaderParser(packetFormat),
+        type: new PacketHeaderParser(),
       })
       .array('m_suspensionPosition', {
         length: 4,
@@ -80,7 +78,5 @@ export class PacketMotionExDataParser extends F1Parser {
           type: new Parser().floatle(''),
         });
     }
-
-    this.data = this.fromBuffer(buffer);
   }
 }

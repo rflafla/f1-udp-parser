@@ -1,6 +1,7 @@
 import {F1Parser} from '../F1Parser';
+import { LapData } from './types';
 
-export class LapDataParser extends F1Parser {
+export class LapDataParser extends F1Parser<LapData> {
   constructor(packetFormat: number) {
     super();
 

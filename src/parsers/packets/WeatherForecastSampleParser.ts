@@ -1,6 +1,7 @@
 import {F1Parser} from '../F1Parser';
+import { WeatherForecastSample } from './types';
 
-export class WeatherForecastSampleParser extends F1Parser {
+export class WeatherForecastSampleParser extends F1Parser<WeatherForecastSample> {
   constructor() {
     super();
 

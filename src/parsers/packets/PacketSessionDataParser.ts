@@ -5,15 +5,14 @@ import {PacketHeaderParser} from './PacketHeaderParser';
 import {PacketSessionData} from './types';
 import {WeatherForecastSampleParser} from './WeatherForecastSampleParser';
 
-export class PacketSessionDataParser extends F1Parser {
-  data: PacketSessionData;
+export class PacketSessionDataParser extends F1Parser<PacketSessionData> {
 
-  constructor(buffer: Buffer, packetFormat: number) {
+  constructor(packetFormat: number) {
     super();
 
     this.endianess('little')
       .nest('m_header', {
-        type: new PacketHeaderParser(packetFormat),
+        type: new PacketHeaderParser(),
       })
       .uint8('m_weather')
       .int8('m_trackTemperature')
@@ -122,7 +121,5 @@ export class PacketSessionDataParser extends F1Parser {
         .floatle('m_sector2LapDistanceStart')
         .floatle('m_sector3LapDistanceStart');
     }
-
-    this.data = this.fromBuffer(buffer);
   }
 }

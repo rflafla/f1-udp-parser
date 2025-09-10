@@ -1,6 +1,7 @@
 import {F1Parser} from '../F1Parser';
+import { CarStatusData } from './types';
 
-export class CarStatusDataParser extends F1Parser {
+export class CarStatusDataParser extends F1Parser<CarStatusData> {
   constructor(packetFormat: number) {
     super();
     this.uint8('m_tractionControl')

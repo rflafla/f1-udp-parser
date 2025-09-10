@@ -3,15 +3,14 @@ import {CarTelemetryDataParser} from './CarTelemetryDataParser';
 import {PacketHeaderParser} from './PacketHeaderParser';
 import {PacketCarTelemetryData} from './types';
 
-export class PacketCarTelemetryDataParser extends F1Parser {
-  data: PacketCarTelemetryData;
+export class PacketCarTelemetryDataParser extends F1Parser<PacketCarTelemetryData> {
 
-  constructor(buffer: Buffer, packetFormat: number) {
+  constructor() {
     super();
 
     this.endianess('little')
       .nest('m_header', {
-        type: new PacketHeaderParser(packetFormat),
+        type: new PacketHeaderParser(),
       })
       .array('m_carTelemetryData', {
         length: 22,
@@ -22,6 +21,5 @@ export class PacketCarTelemetryDataParser extends F1Parser {
       .uint8('m_mfdPanelIndexSecondaryPlayer')
       .int8('m_suggestedGear');
 
-    this.data = this.fromBuffer(buffer);
   }
 }
