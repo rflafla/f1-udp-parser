@@ -32,8 +32,13 @@ export class CarStatusDataParser extends F1Parser<CarStatusData> {
     this.floatle('m_ersStoreEnergy')
       .uint8('m_ersDeployMode')
       .floatle('m_ersHarvestedThisLapMGUK')
-      .floatle('m_ersHarvestedThisLapMGUH')
-      .floatle('m_ersDeployedThisLap')
-      .uint8('m_networkPaused');
+      .floatle('m_ersHarvestedThisLapMGUH');
+
+    // F1 26 adds the per-lap ERS harvest limit.
+    if (packetFormat >= 2026) {
+      this.floatle('m_ersHarvestedLimitPerLap');
+    }
+
+    this.floatle('m_ersDeployedThisLap').uint8('m_networkPaused');
   }
 }

@@ -5,16 +5,18 @@ import {PacketCarTelemetryData} from './types';
 
 export class PacketCarTelemetryDataParser extends F1Parser<PacketCarTelemetryData> {
 
-  constructor() {
+  constructor(packetFormat: number) {
     super();
+
+    const cars = packetFormat >= 2026 ? 24 : 22;
 
     this.endianess('little')
       .nest('m_header', {
         type: new PacketHeaderParser(),
       })
       .array('m_carTelemetryData', {
-        length: 22,
-        type: new CarTelemetryDataParser(),
+        length: cars,
+        type: new CarTelemetryDataParser(packetFormat),
       });
 
     this.uint8('m_mfdPanelIndex')

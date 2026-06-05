@@ -34,4 +34,14 @@ export const TRACKS: Track[] = [
   {name: 'Miami', lat: 25.95597587, lon: -80.23981988},
   {name: 'Las Vegas', lat: 36.10983670164431, lon: -115.16149946704398},
   {name: 'Losail', lat: 25.489072129113993, lon: 51.44970029356955},
+  {name: 'Unknown', lat: 0, lon: 0}, // 33
+  {name: 'Unknown', lat: 0, lon: 0}, // 34
+  {name: 'Unknown', lat: 0, lon: 0}, // 35
+  {name: 'Unknown', lat: 0, lon: 0}, // 36
+  {name: 'Unknown', lat: 0, lon: 0}, // 37
+  {name: 'Unknown', lat: 0, lon: 0}, // 38
+  {name: 'Silverstone (Reverse)', lat: 52.06922421, lon: -1.02226861}, // 39
+  {name: 'Austria (Reverse)', lat: 47.22031495, lon: 14.76673126}, // 40
+  {name: 'Zandvoort (Reverse)', lat: 52.388851, lon: 4.5407599}, // 41
+  {name: 'Madrid', lat: 40.4637, lon: -3.7492}, // 42
 ];

@@ -26,6 +26,15 @@ const HITECH_COLOR = '#E8E8E8';
 const RACING_POINT_COLOR_2020 = '#FAA0BE';
 const RENAULT_COLOR_2020 = '#FFF500';
 
+const SAUBER_COLOR = '#52E252';
+const RB_COLOR = '#6692FF';
+const APXGP_COLOR = '#000000';
+const AIX_RACING_COLOR = '#1B3A6B';
+const RODIN_COLOR = '#000000';
+const INVICTA_COLOR = '#D4A12A';
+const AUDI_COLOR = '#BB0A30';
+const CADILLAC_COLOR = '#A5915F';
+
 export const TEAMS: {[year: number]: {[index: number]: Team}} = {
   2023: {
     0: {name: 'Mercedes', color: MERCEDES_COLOR},
@@ -136,5 +145,67 @@ export const TEAMS: {[year: number]: {[index: number]: Team}} = {
     151: {name: "Trident '23", color: TRIDENT_COLOR},
     152: {name: "Van Amersfoort Racing '23", color: '#FFFFFF'},
     153: {name: "Virtuosi '23", color: UNI_VIRTUOSI_COLOR},
+  },
+  2026: {
+    0: {name: 'Mercedes', color: MERCEDES_COLOR},
+    1: {name: 'Ferrari', color: FERRARI_COLOR},
+    2: {name: 'Red Bull Racing', color: RED_BULL_COLOR},
+    3: {name: 'Williams', color: WILLIAMS_COLOR},
+    4: {name: 'Aston Martin', color: ASTON_MARTIN_COLOR},
+    5: {name: 'Alpine', color: ALPINE_COLOR},
+    6: {name: 'RB', color: RB_COLOR},
+    7: {name: 'Haas', color: HAAS_COLOR},
+    8: {name: 'McLaren', color: MCLAREN_COLOR},
+    9: {name: 'Sauber', color: SAUBER_COLOR},
+    41: {name: 'F1 Generic', color: '#FFFFFF'},
+    104: {name: 'F1 Custom Team', color: '#FFFFFF'},
+    129: {name: 'Konnersport', color: MERCEDES_COLOR},
+    142: {name: "APXGP '24", color: APXGP_COLOR},
+    154: {name: "APXGP '25", color: APXGP_COLOR},
+    155: {name: "Konnersport '24", color: MERCEDES_COLOR},
+    158: {name: "Art GP '24", color: ART_GRAND_PRIX_COLOR},
+    159: {name: "Campos '24", color: CAMPOS_VEXATEC_COLOR},
+    160: {name: "Rodin Motorsport '24", color: RODIN_COLOR},
+    161: {name: "AIX Racing '24", color: AIX_RACING_COLOR},
+    162: {name: "DAMS '24", color: DAMS_COLOR},
+    163: {name: "Hitech '24", color: HITECH_COLOR},
+    164: {name: "MP Motorsport '24", color: MP_MOTORSPORT_COLOR},
+    165: {name: "Prema '24", color: PREMA_COLOR},
+    166: {name: "Trident '24", color: TRIDENT_COLOR},
+    167: {name: "Van Amersfoort Racing '24", color: '#FFFFFF'},
+    168: {name: "Invicta '24", color: INVICTA_COLOR},
+    185: {name: "Mercedes '24", color: MERCEDES_COLOR},
+    186: {name: "Ferrari '24", color: FERRARI_COLOR},
+    187: {name: "Red Bull Racing '24", color: RED_BULL_COLOR},
+    188: {name: "Williams '24", color: WILLIAMS_COLOR},
+    189: {name: "Aston Martin '24", color: ASTON_MARTIN_COLOR},
+    190: {name: "Alpine '24", color: ALPINE_COLOR},
+    191: {name: "RB '24", color: RB_COLOR},
+    192: {name: "Haas '24", color: HAAS_COLOR},
+    193: {name: "McLaren '24", color: MCLAREN_COLOR},
+    194: {name: "Sauber '24", color: SAUBER_COLOR},
+    465: {name: "Art GP '25", color: ART_GRAND_PRIX_COLOR},
+    466: {name: "Campos '25", color: CAMPOS_VEXATEC_COLOR},
+    467: {name: "Rodin Motorsport '25", color: RODIN_COLOR},
+    468: {name: "AIX Racing '25", color: AIX_RACING_COLOR},
+    469: {name: "DAMS '25", color: DAMS_COLOR},
+    470: {name: "Hitech '25", color: HITECH_COLOR},
+    471: {name: "MP Motorsport '25", color: MP_MOTORSPORT_COLOR},
+    472: {name: "Prema '25", color: PREMA_COLOR},
+    473: {name: "Trident '25", color: TRIDENT_COLOR},
+    474: {name: "Van Amersfoort Racing '25", color: '#FFFFFF'},
+    475: {name: "Invicta '25", color: INVICTA_COLOR},
+    476: {name: "Mercedes '26", color: MERCEDES_COLOR},
+    477: {name: "Ferrari '26", color: FERRARI_COLOR},
+    478: {name: "Red Bull Racing '26", color: RED_BULL_COLOR},
+    479: {name: "Williams '26", color: WILLIAMS_COLOR},
+    480: {name: "Aston Martin '26", color: ASTON_MARTIN_COLOR},
+    481: {name: "Alpine '26", color: ALPINE_COLOR},
+    482: {name: "RB '26", color: RB_COLOR},
+    483: {name: "Haas '26", color: HAAS_COLOR},
+    484: {name: "McLaren '26", color: MCLAREN_COLOR},
+    485: {name: "Audi '26", color: AUDI_COLOR},
+    486: {name: "Cadillac '26", color: CADILLAC_COLOR},
+    255: {name: 'Not found', color: '#FFFFFF'},
   },
 };

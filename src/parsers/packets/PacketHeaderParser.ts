@@ -9,6 +9,7 @@ export const SINCE_2023 = function (tag: string, parser: Parser): Parser['option
       2023: parser,
       2024: parser,
       2025: parser,
+      2026: parser,
     },
     defaultChoice: Parser.start(),
     tag: tag,

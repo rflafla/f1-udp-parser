@@ -1,10 +1,9 @@
 import {F1Parser} from '../F1Parser';
-import {CarDamageDataParser} from './CarDamageDataParser';
+import {CarTelemetry2DataParser} from './CarTelemetry2DataParser';
 import {PacketHeaderParser} from './PacketHeaderParser';
-import {PacketCarDamageData} from './types';
+import {PacketCarTelemetry2Data} from './types';
 
-export class PacketCarDamageDataParser extends F1Parser<PacketCarDamageData> {
-
+export class PacketCarTelemetry2DataParser extends F1Parser<PacketCarTelemetry2Data> {
   constructor(packetFormat: number) {
     super();
 
@@ -14,10 +13,9 @@ export class PacketCarDamageDataParser extends F1Parser<PacketCarDamageData> {
       .nest('m_header', {
         type: new PacketHeaderParser(),
       })
-      .array('m_carDamageData', {
+      .array('m_carTelemetry2Data', {
         length: cars,
-        type: new CarDamageDataParser(packetFormat),
+        type: new CarTelemetry2DataParser(),
       });
-
   }
 }

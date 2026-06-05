@@ -8,13 +8,15 @@ export class PacketMotionDataParser extends F1Parser<PacketMotionData> {
   constructor(packetFormat: number) {
     super();
 
+    const cars = packetFormat >= 2026 ? 24 : 22;
+
     this.endianess('little')
       .nest('m_header', {
         type: new PacketHeaderParser(),
       })
       .array('m_carMotionData', {
-        length: 22,
-        type: new CarMotionDataParser(),
+        length: cars,
+        type: new CarMotionDataParser(packetFormat),
       });
 
     if (packetFormat === 2022) {

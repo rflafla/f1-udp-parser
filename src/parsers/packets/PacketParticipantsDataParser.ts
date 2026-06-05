@@ -11,10 +11,12 @@ export class PacketParticipantsDataParser extends F1Parser<PacketParticipantsDat
       type: new PacketHeaderParser(),
     });
 
+    const cars = packetFormat >= 2026 ? 24 : 22;
+
     this.uint8('m_numActiveCars');
 
     this.array('m_participants', {
-      length: 22,
+      length: cars,
       type: new ParticipantDataParser(packetFormat),
     });
   }

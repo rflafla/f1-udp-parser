@@ -7,13 +7,15 @@ export class PacketLobbyInfoDataParser extends F1Parser<PacketLobbyInfoData> {
   constructor(packetFormat: number) {
     super();
 
+    const cars = packetFormat >= 2026 ? 24 : 22;
+
     this.endianess('little')
       .nest('m_header', {
         type: new PacketHeaderParser(),
       })
       .uint8('m_numPlayers')
       .array('m_lobbyPlayers', {
-        length: 22,
+        length: cars,
         type: new LobbyInfoDataParser(packetFormat),
       });
   }

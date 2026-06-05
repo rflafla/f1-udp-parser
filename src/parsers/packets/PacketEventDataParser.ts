@@ -83,6 +83,7 @@ export interface SafetyCar {
 export interface Collision {
   vehicle1Idx: number;
   vehicle2Idx: number;
+  severity?: number;
 }
 
 
@@ -223,10 +224,15 @@ export class SafetyCarParser extends F1Parser<SafetyCar> {
 }
 
 export class CollisionParser extends F1Parser<Collision> {
-  constructor() {
+  constructor(packetFormat: number) {
     super();
 
     this.endianess('little').uint8('vehicle1Idx').uint8('vehicle2Idx');
+
+    // F1 26 adds collision severity (0 = low, 1 = medium, 2 = high).
+    if (packetFormat >= 2026) {
+      this.uint8('severity');
+    }
   }
 }
 
@@ -263,7 +269,7 @@ export class PacketEventDataParser extends F1Parser<PacketEventData> {
         [EVENT_CODES_INDEX[EVENT_CODES.ButtonStatus]]: new ButtonsParser(),
         [EVENT_CODES_INDEX[EVENT_CODES.Overtake]]: new OvertakeParser(),
         [EVENT_CODES_INDEX[EVENT_CODES.SafetyCar]]: new SafetyCarParser(),
-        [EVENT_CODES_INDEX[EVENT_CODES.Collision]]: new CollisionParser(),
+        [EVENT_CODES_INDEX[EVENT_CODES.Collision]]: new CollisionParser(packetFormat),
       },
       defaultChoice: Parser.start(),
     });

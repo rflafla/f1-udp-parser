@@ -8,13 +8,15 @@ export class PacketFinalClassificationDataParser extends F1Parser<PacketFinalCla
   constructor(packetFormat: number) {
     super();
 
+    const cars = packetFormat >= 2026 ? 24 : 22;
+
     this.endianess('little')
       .nest('m_header', {
         type: new PacketHeaderParser(),
       })
       .uint8('m_numCars')
       .array('m_classificationData', {
-        length: 22,
+        length: cars,
         type: new FinalClassificationDataParser(packetFormat),
       });
 

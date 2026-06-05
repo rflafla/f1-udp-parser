@@ -4,7 +4,7 @@ import { TimeTrialDataSetParser } from './TimeTrialDataSetParser';
 import { PacketTimeTrialData } from './types';
 
 export class PacketTimeTrialDataParser extends F1Parser<PacketTimeTrialData> {
-  constructor() {
+  constructor(packetFormat: number) {
     super();
 
     this.endianess('little').nest('m_header', {
@@ -12,15 +12,15 @@ export class PacketTimeTrialDataParser extends F1Parser<PacketTimeTrialData> {
     });
 
     this.nest('m_playerSessionBestDataSet', {
-      type: new TimeTrialDataSetParser(),
+      type: new TimeTrialDataSetParser(packetFormat),
     });
 
     this.nest('m_personalBestDataSet', {
-      type: new TimeTrialDataSetParser(),
+      type: new TimeTrialDataSetParser(packetFormat),
     });
 
     this.nest('m_rivalDataSet', {
-      type: new TimeTrialDataSetParser(),
+      type: new TimeTrialDataSetParser(packetFormat),
     });
   }
 }

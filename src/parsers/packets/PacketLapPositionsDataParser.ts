@@ -4,8 +4,10 @@ import { PacketHeaderParser } from './PacketHeaderParser';
 import { PacketLapPositionsData } from './types';
 
 export class PacketLapPositionsDataParser extends F1Parser<PacketLapPositionsData> {
-    constructor() {
+    constructor(packetFormat: number) {
         super();
+
+        const cars = packetFormat >= 2026 ? 24 : 22;
 
         this.endianess('little')
             .nest('m_header', {
@@ -17,7 +19,7 @@ export class PacketLapPositionsDataParser extends F1Parser<PacketLapPositionsDat
                 length: 50,
                 type: new Parser()
                     .array('', {
-                        length: 22,
+                        length: cars,
                         type: new Parser().uint8(''),
                     }),
             });

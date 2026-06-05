@@ -3,7 +3,7 @@ import {F1Parser} from '../F1Parser';
 import { CarTelemetryData } from './types';
 
 export class CarTelemetryDataParser extends F1Parser<CarTelemetryData> {
-  constructor() {
+  constructor(packetFormat: number) {
     super();
     this.uint16le('m_speed')
       .floatle('m_throttle')
@@ -26,9 +26,16 @@ export class CarTelemetryDataParser extends F1Parser<CarTelemetryData> {
       .array('m_tyresInnerTemperature', {
         length: 4,
         type: new Parser().uint8(''),
-      })
-      .uint16le('m_engineTemperature')
-      .array('m_tyresPressure', {
+      });
+
+    // F1 26 narrows engine temperature to a uint8 (it never needed 16 bits).
+    if (packetFormat >= 2026) {
+      this.uint8('m_engineTemperature');
+    } else {
+      this.uint16le('m_engineTemperature');
+    }
+
+    this.array('m_tyresPressure', {
         length: 4,
         type: new Parser().floatle(''),
       })

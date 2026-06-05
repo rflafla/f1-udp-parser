@@ -79,6 +79,18 @@ export interface WeatherForecastSample {
   m_rainPercentage: number;
 }
 
+// F1 26
+export interface ActiveAeroZone {
+  m_zoneStart: number;
+  m_zoneEnd: number;
+}
+
+// F1 26
+export interface DRSZone {
+  m_zoneStart: number;
+  m_zoneEnd: number;
+}
+
 export interface PacketSessionData {
   m_header: PacketHeader;
   m_weather: number;
@@ -158,6 +170,20 @@ export interface PacketSessionData {
   m_weekendStructure: number[];
   m_sector2LapDistanceStart: number;
   m_sector3LapDistanceStart: number;
+  // F1 26
+  m_activeAeroTrackStatus: number;
+  m_numActiveAeroZonesFull: number;
+  m_activeAeroZonesFull: ActiveAeroZone[];
+  m_numActiveAeroZonesPartial: number;
+  m_activeAeroZonesPartial: ActiveAeroZone[];
+  m_numDRSZones: number;
+  m_drsZones: DRSZone[];
+  m_startReactionTime: number;
+  m_antiLockBrakesAssist: number;
+  m_tractionControlAssist: number;
+  m_dynamicRacingLineHiVis: number;
+  m_dynamicRacingLineColourBlind: number;
+  m_recurringRewindPrompt: number;
 }
 
 export interface LapData {
@@ -350,6 +376,7 @@ export interface CarStatusData {
   m_ersDeployMode: number;
   m_ersHarvestedThisLapMGUK: number;
   m_ersHarvestedThisLapMGUH: number;
+  m_ersHarvestedLimitPerLap: number; // F1 26
   m_ersDeployedThisLap: number;
   m_networkPaused: number;
 }
@@ -554,4 +581,21 @@ export interface PacketLapPositionsData {
   m_numLaps: number; // Number of laps in the data
   m_lapStart: number; // Index of the lap where the data starts, 0 indexed
   m_positionForVehicleIdx: number[][]; // Array holding the position of the car in a given lap, 0 if no record : m_positionForVehicleIdx[50][cs_maxNumCarsInUDPData];
+}
+
+// F1 26 - additional telemetry for all cars
+export interface CarTelemetry2Data {
+  m_activeAeroMode: number;
+  m_activeAeroAvailable: number;
+  m_activeAeroActivationDistance: number;
+  m_overtakeAvailable: number;
+  m_overtakeActive: number;
+  m_overtakeActivationDistance: number;
+  m_2026Regulations: number;
+  m_drivingWrongWay: number;
+}
+
+export interface PacketCarTelemetry2Data {
+  m_header: PacketHeader;
+  m_carTelemetry2Data: CarTelemetry2Data[];
 }

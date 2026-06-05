@@ -27,6 +27,7 @@ import {
   PacketMotionExDataParser,
   PacketTimeTrialDataParser,
   PacketLapPositionsDataParser,
+  PacketCarTelemetry2DataParser,
 } from './parsers/packets';
 import * as packetTypes from './parsers/packets/types';
 import { Address, Options, ParsedMessage, TestMode } from './types';
@@ -177,6 +178,9 @@ class F1TelemetryClient extends EventEmitter {
 
       case PACKETS.lapPositions:
         return PacketLapPositionsDataParser;
+
+      case PACKETS.carTelemetry2:
+        return PacketCarTelemetry2DataParser;
 
       default:
         return null;

@@ -15,13 +15,18 @@ export class ParticipantDataParser extends F1Parser<ParticipantData> {
   constructor(packetFormat: number) {
     super();
 
-    this.uint8('m_aiControlled')
-      .uint8('m_driverId')
-      .uint8('m_networkId')
-      .uint8('m_teamId')
-      .uint8('m_myTeam')
-      .uint8('m_raceNumber')
-      .uint8('m_nationality');
+    this.uint8('m_aiControlled');
+
+    // F1 26 widens the driver/network/team ids to uint16 for a larger database.
+    if (packetFormat >= 2026) {
+      this.uint16le('m_driverId')
+        .uint16le('m_networkId')
+        .uint16le('m_teamId');
+    } else {
+      this.uint8('m_driverId').uint8('m_networkId').uint8('m_teamId');
+    }
+
+    this.uint8('m_myTeam').uint8('m_raceNumber').uint8('m_nationality');
 
     if (packetFormat >= 2025) {
       this.string('m_name', {

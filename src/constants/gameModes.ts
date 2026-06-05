@@ -20,5 +20,10 @@ export const GAME_MODES: {[index: number]: string} = {
   24: 'Career 24 Online',
   25: 'My Team Career 24',
   26: 'Curated Career 24',
+  27: "My Team Career '25",
+  28: "Driver Career '25",
+  29: "Career '25 Online",
+  30: "Challenge Career '25",
+  75: 'Story Mode (APXGP)',
   127: 'Benchmark',
 };

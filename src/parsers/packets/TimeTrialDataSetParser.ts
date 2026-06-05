@@ -2,11 +2,18 @@ import {F1Parser} from '../F1Parser';
 import { TimeTrialDataSet } from './types';
 
 export class TimeTrialDataSetParser extends F1Parser<TimeTrialDataSet> {
-  constructor() {
+  constructor(packetFormat: number) {
     super();
-    this.endianess('little')
-      .uint8('m_carIdx')
-      .uint8('m_teamId')
+    this.endianess('little').uint8('m_carIdx');
+
+    // F1 26 widens team id to uint16 for a larger database.
+    if (packetFormat >= 2026) {
+      this.uint16le('m_teamId');
+    } else {
+      this.uint8('m_teamId');
+    }
+
+    this.uint32('m_lapTimeInMS')
       .uint32('m_sector1TimeInMS')
       .uint32('m_sector2TimeInMS')
       .uint32('m_sector3TimeInMS')

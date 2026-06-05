@@ -1,5 +1,7 @@
 import {Parser} from 'binary-parser';
 import {F1Parser} from '../F1Parser';
+import {ActiveAeroZoneParser} from './ActiveAeroZoneParser';
+import {DRSZoneParser} from './DRSZoneParser';
 import {MarshalZoneParser} from './MarshalZoneParser';
 import {PacketHeaderParser} from './PacketHeaderParser';
 import {PacketSessionData} from './types';
@@ -120,6 +122,31 @@ export class PacketSessionDataParser extends F1Parser<PacketSessionData> {
         })
         .floatle('m_sector2LapDistanceStart')
         .floatle('m_sector3LapDistanceStart');
+    }
+
+    if (packetFormat >= 2026) {
+      this.uint8('m_activeAeroTrackStatus')
+        .uint8('m_numActiveAeroZonesFull')
+        .array('m_activeAeroZonesFull', {
+          length: 8,
+          type: new ActiveAeroZoneParser(),
+        })
+        .uint8('m_numActiveAeroZonesPartial')
+        .array('m_activeAeroZonesPartial', {
+          length: 8,
+          type: new ActiveAeroZoneParser(),
+        })
+        .uint8('m_numDRSZones')
+        .array('m_drsZones', {
+          length: 4,
+          type: new DRSZoneParser(),
+        })
+        .floatle('m_startReactionTime')
+        .uint8('m_antiLockBrakesAssist')
+        .uint8('m_tractionControlAssist')
+        .uint8('m_dynamicRacingLineHiVis')
+        .uint8('m_dynamicRacingLineColourBlind')
+        .uint8('m_recurringRewindPrompt');
     }
   }
 }
